@@ -5,6 +5,7 @@ export const State = {
   TopLevelContent: 1,
   InsideLineComment: 2,
   AfterPropertyName: 3,
+  AfterPropertyNameAfterEqualSign: 4,
 }
 
 /**
@@ -28,13 +29,17 @@ export const TokenType = {
 export const TokenMap = {
   [TokenType.Text]: 'Text',
   [TokenType.Comment]: 'Comment',
+  [TokenType.PropertyName]: 'PropertyName',
+  [TokenType.Whitespace]: 'Whitespace',
+  [TokenType.Punctuation]: 'Punctuation',
+  [TokenType.PropertyValueString]: 'String',
 }
 
 const RE_LINE_COMMENT_START = /^#/
 const RE_WHITESPACE = /^ +/
 const RE_CURLY_OPEN = /^\{/
 const RE_CURLY_CLOSE = /^\}/
-const RE_PROPERTY_NAME = /^[a-zA-Z\-\_\d\s]+\b(?=\s*:)/
+const RE_PROPERTY_NAME = /^[\w]+\b(?=\=)/
 const RE_PROPERTY_VALUE = /^[^;\}]+/
 const RE_SEMICOLON = /^;/
 const RE_COMMA = /^,/
@@ -59,7 +64,8 @@ const RE_COMBINATOR = /^[\+\>\~]/
 const RE_LANGUAGE_CONSTANT = /^(?:true|false)/
 const RE_COLON = /^:/
 const RE_DASH = /^\-/
-const RE_WORDS = /^[\w\s]*\w/
+const RE_EQUAL_SIGN = /^\=/
+const RE_WORD = /^[\w\*\.]+/
 
 export const initialLineState = {
   state: 1,
@@ -88,6 +94,12 @@ export const tokenizeLine = (line, lineState) => {
         } else if ((next = part.match(RE_WHITESPACE))) {
           token = TokenType.Whitespace
           state = State.TopLevelContent
+        } else if ((next = part.match(RE_PROPERTY_NAME))) {
+          token = TokenType.PropertyName
+          state = State.AfterPropertyName
+        } else if ((next = part.match(RE_WORD))) {
+          token = TokenType.Text
+          state = State.TopLevelContent
         } else if ((next = part.match(RE_ANYTHING))) {
           token = TokenType.Text
           state = State.TopLevelContent
@@ -104,13 +116,28 @@ export const tokenizeLine = (line, lineState) => {
         }
         break
       case State.AfterPropertyName:
-        if ((next = part.match(RE_COLON))) {
+        if ((next = part.match(RE_EQUAL_SIGN))) {
           token = TokenType.Punctuation
-          state = State.AfterPropertyNameAfterColon
+          state = State.AfterPropertyNameAfterEqualSign
         } else if ((next = part.match(RE_WHITESPACE))) {
           token = TokenType.Whitespace
           state = State.AfterPropertyName
         } else {
+          throw new Error('no')
+        }
+        break
+      case State.AfterPropertyNameAfterEqualSign:
+        if ((next = part.match(RE_LINE_COMMENT_START))) {
+          token = TokenType.Comment
+          state = State.InsideLineComment
+        } else if ((next = part.match(RE_WORD))) {
+          token = TokenType.PropertyValueString
+          state = State.TopLevelContent
+        } else if ((next = part.match(RE_WHITESPACE))) {
+          token = TokenType.Whitespace
+          state = State.AfterPropertyNameAfterEqualSign
+        } else {
+          part
           throw new Error('no')
         }
         break

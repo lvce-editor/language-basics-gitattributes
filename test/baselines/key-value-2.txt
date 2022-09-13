@@ -1,2 +1,6 @@
 Text
+Whitespace
+PropertyName
+Punctuation
+String
 NewLine

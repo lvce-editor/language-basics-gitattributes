@@ -1,0 +1,12 @@
+{
+  "id": "builtin.language-basics-gitattributes",
+  "name": "Language Basics Gitattributes",
+  "description": "Provides syntax highlighting and bracket matching in gitattributes files.",
+  "languages": [
+    {
+      "id": "gitattributes",
+      "extensions": [".gitattributes"],
+      "tokenize": "src/tokenizeGitAttributes.js"
+    }
+  ]
+}

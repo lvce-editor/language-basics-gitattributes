@@ -43,7 +43,7 @@ const RE_PROPERTY_NAME = /^[\w\-\_]+\b(?=\=)/
 const RE_PROPERTY_VALUE = /^[^;\}]+/
 const RE_SEMICOLON = /^;/
 const RE_COMMA = /^,/
-const RE_ANYTHING = /^.*/
+const RE_ANYTHING = /^.+/s
 const RE_ANYTHING_BUT_COMMENT = /^[^#]+/
 const RE_NUMERIC = /^(([0-9]+\.?[0-9]*)|(\.[0-9]+))/
 const RE_ANYTHING_UNTIL_CLOSE_BRACE = /^[^\}]+/

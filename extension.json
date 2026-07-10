@@ -8,5 +8,6 @@
       "extensions": [".gitattributes"],
       "tokenize": "src/tokenizeGitAttributes.js"
     }
-  ]
+  ],
+  "repository": "https://github.com/lvce-editor/language-basics-gitattributes"
 }
